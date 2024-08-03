@@ -1,0 +1,14 @@
+{
+  "name": "purplegraph-nodejs",
+  "version": "1.0.0",
+  "description": "A simple RESTful consumer of PurpleGraphAPI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Fellipe Souto",
+  "license": "ISC",
+  "dependencies": {
+    "node-rest-client": "^1.8.0"
+  }
+}
