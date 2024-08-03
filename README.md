@@ -1,73 +1,53 @@
-# Purple Graph Server
+# Challenge description
 
-```bash
-Fellipe Souto Sampaio
-f.souto@outlook.com
-(Github)[https://github.com/fllsouto]
-```
+- Company: Nubank
+- Role: Junior Software Engineer
+- Date: 26/04/2016
 
-### Sobre a solução
-O desafio foi escrito utilizando a linguagem multiparadigma Scala. Na confecção do servidor RESTful foi utilizado o Scalatra, framework baseado no Sinatra. Foi criado um cliente utilizando nodeJS para facilitar os testes da API.
+[pt-BR]
 
-O problema central consistia em achar todas a combinações de distâncias mínimas em um grafo não dirigido e não valorado. A representação escolhida para o grafo foi uma matriz NxN, onde N é o número de vértices. Isso pode ocupar um tamanho proporcional a N^2 de espaço em memória.
+Neste desafio, vamos supor que estamos procurando nos envolver em análises de redes sociais para clientes em potencial. Nosso objetivo é extrair uma métrica conhecida como "centralidade de proximidade" de sua rede social.
 
-Para resolução do problema implementei o algoritmo [Floyd-Warshall](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm), ele tem complexidade O(N^3) no pior dos casos, por ter três for's aninhados. Entretando por ser um grafo não dirigido e poder considerar que as areastas tem peso 1 as distâncias d(A,B) == d(B,A). Isso diminui o número de operações necessárias, fazendo com que apenas uma parte da matriz de adjacencia tenha que ser operada, a outra parte tem seu resultado refletido. Realizando vários testes verifiquei que na média preciso de (n^2)(n - 1)/2 operações para calcular todos os caminhos mínimos no grafo. 
+As métricas de centralidade visam aproximar o nível de influência de um indivíduo em uma rede social. A distância entre quaisquer dois vértices é seu caminho mais curto. Um determinado vértice (v) tem uma *distancia*. A soma de todas as distâncias de cada vértice para *v* é o resultado. Finalmente, a *proximidade* de um vértice, *v*, é o inverso de *distancia*.
 
-Pegando como exemplo a entrada fornecida por vocês, que tem um **N = 100**, isso resulta em 495 000 iterações, bem menor das 1 000 000 iterações da implementação sem otimizações. Porém como qualquer algoritmo cúbico, para um N muito grande essa diferença torna-se insignificante e o desempenho degrada-se.
+A primeira parte do desafio envolve classificar os vértices dentro de um determinado gráfico não direcionado por sua *proximidade*. O arquivo em anexo fornece o gráfico, com dois nomes de vértice em cada linha. Um único espaço separa os dois, representando uma aresta entre os nós.
 
-A escolha desse algoritmo se deu por ser um dos melhores para se calcular todas as distâncias mínimas de um grafo, de maneira simples e com uma boa eficiência.
+A segunda parte do desafio é criar um servidor web RESTful. Registramos arestas com pontos finais e criamos uma classificação de vértices classificados por centralidade. Podemos pensar no valor de centralidade de um nó. Isso serve como uma "pontuação" inicial para esse cliente.
 
-Escreve testes unitários para a classe **Vertex.scala** e **Graph.scala**, onde tentei cobrir todos os casos possíveis de uso.
+A terceira e última parte é adicionar outro ponto final para sinalizar um nó de cliente como "fraudulento". O sistema deve recuperar um ID de vértice e atualizar a pontuação interna do cliente da seguinte forma: A pontuação do cliente fraudulento deve ser zero. Parentes diretos do cliente "fraudulento" devem ver sua pontuação reduzida pela metade. Geralmente, a empresa se refere indiretamente às pontuações de seus clientes. Devemos multiplicar o cliente "fraudulento" por um coeficiente F.
 
-O cálculo da proximidade e do distânciamento de um vértice sai de forma natural ao usar uma matrix de adjacencia como estrutura de dados. Além disso facilitou o cálculo dos nós fraudolentos, sendo necessário apenas pegar a linha pertencente ao tal vértice, aplicar a formula e mapear nos respectivos scores dos vértices.
+F(k) = (1 - (1/2) k)
 
-### Como instalar/compilar?
+A variável k representa o comprimento do caminho mais curto do cliente "fraudulento" para o cliente em questão.
 
-```bash
-# clonar repositório ou descompactar arquivo
-cd purple-graph-node
+Você deve fornecer um repositório git, ou um link para um repositório privado compartilhado no github, Bitbucket ou algo semelhante, com seu código e um pequeno arquivo README descrevendo a solução e explicando como construir e executar o código. Você deve enviar seu código em uma linguagem de programação funcional, como Clojure, Common Lisp, Scheme, Haskell, ML, F# ou Scala. Em seguida, analisaremos a estrutura e a legibilidade da base de código. Esperamos código de nível de produção. Não há problema em usar bibliotecas para testes ou interação de rede, mas evite usar uma biblioteca que já implemente os algoritmos de gráfico ou rede social principais.
 
-# Versao do node indicada >= v0.10.37
-# Versao do npm indicado >= 1.4.28
-# Esse comando irá instalar as dependências do NodeJs usados no cliente
-npm install
+Não tenha medo de fazer perguntas sempre que encontrar um problema. Além disso, entre em contato a qualquer momento se achar que o prazo não é realista.
 
-cd ../purple-graph-server
+Referências:
+- Closeness Centrality: [http://en.wikipedia.org/wiki/Centrality#Closeness_...] (http://en.wikipedia.org/wiki/Centrality#Closeness_centrality)   
+- Shortest path: [http://en.wikipedia.org/wiki/Shortest_path_problem] (http://en.wikipedia.org/wiki/Shortest_path_problem)
 
-#Versao do java indicado >= 1.7.0_80
-#Versao do javac indicado >= 1.7.0_80
+[en]
 
-# Esse comando irá baixar a versão utilizada do Scala e suas respectivas dependências (pode demorar alguns minutos)
-./sbt
-```
+In this challenge, let's assume we are looking to engage in social networking analysis for prospective customers. We aim to extract a metric known as "closeness centrality" from their social network.
 
-### Como executar?
+Centrality metrics aim to approximate an individual's level of influence within a social network. The distance between any two vertices is their shortest path. A given vertex (v) has a *farness*. The sum of all distances from each vertex to *v* is the result. Finally, a vertex's *closeness*, *v*, is the inverse of *farness*.
+      
+The first part of the challenge involves ranking the vertices within a given undirected graph by their *closeness*. The attached file provides the graph, with two vertex names on each line. A single space separates the two, representing an edge between the nodes. 
 
-```bash
-# Ao terminal o download das depedências do sbt feche execute novamente
-./sbt
+The second part of the challenge is to create a RESTful web server. We register edges with endpoints and create a ranking of vertexes sorted by centrality. We can think of a node's centrality value. This serves as an initial "score" for that customer. 
 
-# Dentro do terminal do sbt execute (pode ter que baixar mais alguma dependência, espere mais um pouco)
-jetty:start
+The third and final part is to add another endpoint for flagging a customer node as "fraudulent." The system should retrieve a vertex ID and update the internal customer score as follows: The fraudulent customer score should be zero. Direct relatives of the "fraudulent" customer should see their score halved. Generally, the company indirectly refers to the scores of its customers. We should multiply the "fraudulent" customer by a coefficient F. 
 
-# Isso irá subir um servidor jetty Scalatra local na porta 8080
-
-# É possível testar o servidor utilizando o 'curl', mas com o cliente node a montagem dos request fica muito mais simples
-
-cd purple-graph-node
-node index.js <host> <porta> <input-file> <action>
-
-#Cada action do cliente node está mapeada para um endpoint do servidor Scalatra
-#
-# Cria um novo grafo, dado a entrada fornecida
-# new -> POST /purplegraph/api/rank/
-#
-# Insere nós fraudulentos, dado a entrada fornecida
-# fraud -> POST /purplegraph/api/fraud/
-#
-# Reseta as configurações do sistema para receber uma nova entrada
-# reset -> POST /purplegraph/api/rank/reset
-#
-# Mostra o ranking de proximidade, mostrando o identificador do vértice e seu score 
-# shot -> GET /purplegraph/api/rank/
-```
+F(k) = (1 - (1/2) k)  
+      
+The variable k represents the length of the shortest path from the "fraudulent" customer to the customer in question.  
+      
+You should provide a git repository, or a link to a shared private repository on github, Bitbucket, or something similar, with your code and a short README file outlining the solution and explaining how to build and run the code. You should submit your code in a functional programming language, such as Clojure, Common Lisp, Scheme, Haskell, ML, F#, or Scala. We will then analyze the structure and readability of the codebase. We expect production-grade code. There is no problem with using libraries for testing or network interaction, but please avoid using a library that already implements the core graph or social network algorithms.  
+      
+Don't shy away from asking questions whenever you encounter a problem. Also, please do get in touch at any moment if you believe the timeframe is unrealistic.   
+      
+References:
+- Closeness Centrality: [http://en.wikipedia.org/wiki/Centrality#Closeness_...] (http://en.wikipedia.org/wiki/Centrality#Closeness_centrality)   
+- Shortest path: [http://en.wikipedia.org/wiki/Shortest_path_problem] (http://en.wikipedia.org/wiki/Shortest_path_problem)
